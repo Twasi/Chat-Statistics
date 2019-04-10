@@ -9,6 +9,7 @@ import net.twasiplugin.dependency.streamtracker.database.StreamRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatStatisticsRepository extends Repository<ChatStatisticsEntity> {
 
@@ -32,6 +33,15 @@ public class ChatStatisticsRepository extends Repository<ChatStatisticsEntity> {
                 .field("stream.user").equal(user)
                 .field("timestamp").greaterThanOrEq(to)
                 .field("timestamp").lessThanOrEq(from).asList();
+    }
+
+    public int getChatMessageAmount(User user, String twitchId) {
+        AtomicInteger amount = new AtomicInteger(0);
+        store.createQuery(ChatStatisticsEntity.class)
+                .field("stream.user").equal(user)
+                .field("MessagesByUser." + twitchId).exists()
+                .forEach(entity -> amount.addAndGet(entity.getMessagesByUser().get(twitchId)));
+        return amount.get();
     }
 
 }

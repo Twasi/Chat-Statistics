@@ -1,0 +1,7 @@
+main: net.twasiplugin.chatstatistics.ChatStatisticsPlugin
+author: Twasi-Team
+version: 0.1-SNAPSHOT
+name: Chat-Statistics
+messageHandler: true
+autoinstall: true
+hidden: true

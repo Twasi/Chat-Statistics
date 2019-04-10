@@ -27,6 +27,9 @@ public class ChatStatisticsEntity extends BaseEntity {
         UsedEmotes = usedEmotes;
     }
 
+    public ChatStatisticsEntity() {
+    }
+
     public StreamEntity getSession() {
         return stream;
     }

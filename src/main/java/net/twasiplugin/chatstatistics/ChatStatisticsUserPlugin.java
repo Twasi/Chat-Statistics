@@ -2,8 +2,10 @@ package net.twasiplugin.chatstatistics;
 
 import net.twasi.core.database.models.User;
 import net.twasi.core.events.TwasiEventHandler;
+import net.twasi.core.interfaces.api.TwasiInterface;
 import net.twasi.core.models.Message.TwasiMessage;
 import net.twasi.core.plugin.api.TwasiUserPlugin;
+import net.twasi.core.plugin.api.TwasiVariable;
 import net.twasi.core.plugin.api.events.TwasiDisableEvent;
 import net.twasi.core.plugin.api.events.TwasiEnableEvent;
 import net.twasi.core.plugin.api.events.TwasiMessageEvent;
@@ -20,10 +22,7 @@ import net.twasiplugin.dependency.streamtracker.events.StreamStopEvent;
 import net.twasiplugin.dependency.streamtracker.events.StreamTrackEvent;
 import org.bson.types.ObjectId;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static net.twasi.twitchapi.TwitchAPI.kraken;
@@ -40,7 +39,7 @@ public class ChatStatisticsUserPlugin extends TwasiUserPlugin {
 
     private ChatStatisticsRepository repo;
 
-    private boolean keepTracking = false;
+    private boolean keepTracking = true;
 
     @Override
     public void onEnable(TwasiEnableEvent e) {
@@ -122,5 +121,20 @@ public class ChatStatisticsUserPlugin extends TwasiUserPlugin {
         });
         t1.setDaemon(true);
         t1.start();
+    }
+
+    @Override
+    public List<TwasiVariable> getVariables() {
+        return Collections.singletonList(new TwasiVariable(this) {
+            @Override
+            public List<String> getNames() {
+                return Collections.singletonList("messages");
+            }
+
+            @Override
+            public String process(String name, TwasiInterface inf, String[] params, TwasiMessage message) {
+                return String.valueOf(repo.getChatMessageAmount(getTwasiInterface().getStreamer().getUser(), message.getSender().getTwitchId()));
+            }
+        });
     }
 }
